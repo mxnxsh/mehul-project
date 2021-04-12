@@ -26,7 +26,7 @@ export default function Register(props) {
   };
 
   useEffect(() => {
-    if (!userInfo) {
+    if (userInfo) {
       props.history.push('/notes');
     }
   }, [userInfo, props.history]);

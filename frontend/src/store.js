@@ -1,6 +1,6 @@
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { noteCreateReducer } from './reducers/noteReducers';
+import { noteCreateReducer, noteDeleteReducer, noteListReducer } from './reducers/noteReducers';
 
 import { userRegisterReducer, userSignInReducer } from './reducers/userReducers';
 
@@ -17,7 +17,9 @@ const reducer = combineReducers({
   userSignIn: userSignInReducer,
   userRegister: userRegisterReducer,
 
-  createNote: noteCreateReducer,
+  Note: noteCreateReducer,
+  noteList: noteListReducer,
+  noteDelete: noteDeleteReducer,
 })
 
 const composeEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

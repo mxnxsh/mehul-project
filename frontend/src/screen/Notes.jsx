@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { createNote } from '../actions/noteActions';
+
+import { createNote, deleteNote, listNote } from '../actions/noteActions';
 import { signOut } from '../actions/userActions';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
 
 export default function Notes() {
   const [title, setTitle] = useState('');
@@ -10,6 +13,15 @@ export default function Notes() {
 
   const userSignIn = useSelector(state => state.userSignIn);
   const { userInfo } = userSignIn;
+
+  const noteList = useSelector(state => state.noteList);
+  const { loading, notes, error } = noteList;
+
+  const Note = useSelector(state => state.Note);
+  const { success } = Note;
+
+  const noteDelete = useSelector(state => state.noteDelete);
+  const { success: successDelete } = noteDelete;
 
   const dispatch = useDispatch();
 
@@ -19,7 +31,19 @@ export default function Notes() {
   const saveNoteHandler = e => {
     e.preventDefault();
     dispatch(createNote({ title, description }));
+    setTitle('');
+    setDescription('');
   };
+  const deleteHandler = _id => {
+    dispatch(deleteNote(_id));
+  };
+  const editHandler = _id => {
+    console.log(_id);
+  };
+  useEffect(() => {
+    dispatch(listNote());
+  }, [dispatch, success, successDelete]);
+
   return (
     <>
       <section id='navigation_bar'>
@@ -114,7 +138,6 @@ export default function Notes() {
             <form onSubmit={saveNoteHandler}>
               <div class='modal-header note_header'>
                 <input type='hidden' name='google_id' value='<%=googleId%>' />
-
                 <div class='form-group'>
                   <input
                     type='text'
@@ -122,6 +145,7 @@ export default function Notes() {
                     placeholder='Title....'
                     class='form-control note_title'
                     id='exampleInputEmail1'
+                    value={title}
                     aria-describedby='emailHelp'
                     onChange={e => setTitle(e.target.value)}
                   />
@@ -141,6 +165,7 @@ export default function Notes() {
                   <textarea
                     name='main_note'
                     placeholder='Add note....'
+                    value={description}
                     class='form-control note_descreption'
                     id='exampleFormControlTextarea1'
                     rows='3'
@@ -167,23 +192,36 @@ export default function Notes() {
 
       <div class='container pt-5'>
         <div class='row'>
-          {/* <% notes.forEach(function(note){ %>
-                    <% note.notes.forEach((n => { %> */}
-          <div class='col-md-3'>
-            <div class='card mb-2 d-block mx-auto' style={{ width: '15rem' }}>
-              <div class='card-body'>
-                <h5 class='card-title'>
-                  {/* <%= n.noteTitle.substring(0, 36) + "..." %> */}
-                </h5>
-                <p class='card-text'>
-                  {/* <%= n.mainNote.substring(0, 30) + "..." %> */}
-                  <a href='/notes/<%= note._id %>/<%=n._id%>'>Read more</a>
-                </p>
+          {loading && <LoadingBox />}
+          {error && <MessageBox variant='danger'>{error}</MessageBox>}
+          {notes.length === 0 ? (
+            <p class='center '>No Notes created</p>
+          ) : (
+            notes.map(note => (
+              <div
+                class='col-md-3'
+                onDoubleClick={() => {
+                  deleteHandler(note._id);
+                }}
+                onClick={() => {
+                  editHandler(note._id);
+                }}
+              >
+                <div
+                  class='card mb-2 d-block mx-auto'
+                  style={{ width: '15rem' }}
+                >
+                  <div class='card-body'>
+                    <h5 class='card-title'>{note.title}</h5>
+                    <p class='card-text'>
+                      {note.description}
+                      <a href='/'>Read more</a>
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {/* <%}))%>
-                    <% }); %> */}
+            ))
+          )}
         </div>
       </div>
     </>
