@@ -7,7 +7,7 @@ import { signOut } from '../actions/userActions';
 import LoadingBox from '../components/LoadingBox';
 import MessageBox from '../components/MessageBox';
 
-export default function Notes() {
+export default function Notes(props) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
@@ -215,7 +215,14 @@ export default function Notes() {
                     <h5 class='card-title'>{note.title}</h5>
                     <p class='card-text'>
                       {note.description}
-                      <a href='/'>Read more</a>
+                      <Link
+                        to={`/notes/${note._id}`}
+                        // onClick={() => {
+                        //   props.history.push(`/order/${order._id}`);
+                        // }}
+                      >
+                        Read more
+                      </Link>
                     </p>
                   </div>
                 </div>

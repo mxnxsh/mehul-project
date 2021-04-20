@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function readNote() {
+export default function ReadNote() {
   return (
     <>
       <section id='navigation_bar'>
