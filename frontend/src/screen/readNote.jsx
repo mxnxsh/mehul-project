@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import LoadingBox from '../components/LoadingBox';
+import MessageBox from '../components/MessageBox';
+import { detailNote, deleteNote } from '../actions/noteActions';
+import { Link } from 'react-router-dom';
+export default function ReadNote(props) {
+  const noteId = props.match.params.id;
 
-export default function ReadNote() {
+  const noteDetail = useSelector(state => state.noteDetail);
+  const { loading, error, note } = noteDetail;
+
+  const noteDelete = useSelector(state => state.noteDelete);
+  const { success: successDelete } = noteDelete;
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(detailNote(noteId));
+  }, [dispatch, noteId]);
+  const deleteHandler = _id => {
+    dispatch(deleteNote(_id));
+    props.history.push('/notes');
+  };
   return (
     <>
       <section id='navigation_bar'>
@@ -130,20 +149,28 @@ export default function ReadNote() {
       </div>
 
       <section id='text_note'>
-        <div class='container'>
-          <div class='bg-white note_jb_tron mx-auto'>
-            <h2>{/* <%=note.noteTitle%> */}</h2>
-            <p>{/* <%=note.mainNote%> */}</p>
-            <div class='float-right'>
-              <a
-                href='/delete/note/<%= uId %>/<%= nId %>'
-                style={{ color: 'red' }}
-              >
-                <i class='fas fa-trash-alt'></i>
-              </a>
+        {loading ? (
+          <LoadingBox />
+        ) : error ? (
+          <MessageBox variant='danger'>{error}</MessageBox>
+        ) : (
+          <div class='container'>
+            <div class='bg-white note_jb_tron mx-auto'>
+              <h2>{note.title}</h2>
+              <p>{note.description}</p>
+              <div class='float-right'>
+                <Link
+                  style={{ color: 'red' }}
+                  onClick={() => {
+                    deleteHandler(note._id);
+                  }}
+                >
+                  <i class='fas fa-trash-alt'></i>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
     </>
   );

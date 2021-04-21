@@ -1,5 +1,5 @@
 import Axios from "axios";
-import { NOTE_CREATE_FAIL, NOTE_CREATE_REQUEST, NOTE_CREATE_SUCCESS, NOTE_DELETE_FAIL, NOTE_DELETE_REQUEST, NOTE_DELETE_SUCCESS, NOTE_LIST_FAIL, NOTE_LIST_REQUEST, NOTE_LIST_SUCCESS } from "../constants/noteConstants";
+import { NOTE_CREATE_FAIL, NOTE_CREATE_REQUEST, NOTE_CREATE_SUCCESS, NOTE_DELETE_FAIL, NOTE_DELETE_REQUEST, NOTE_DELETE_SUCCESS, NOTE_DETAIL_FAIL, NOTE_DETAIL_REQUEST, NOTE_DETAIL_SUCCESS, NOTE_LIST_FAIL, NOTE_LIST_REQUEST, NOTE_LIST_SUCCESS } from "../constants/noteConstants";
 
 export const createNote = ({ title, description }) => async (dispatch, getState) => {
   try {
@@ -69,5 +69,25 @@ export const deleteNote = (_id) => async (dispatch, getState) => {
       ? error.response.data.message
       : error.message
     dispatch({ type: NOTE_DELETE_FAIL, payload: message })
+  }
+}
+export const detailNote = (_id) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: NOTE_DETAIL_REQUEST, payload: _id })
+    const {
+      userSignIn: {
+        userInfo: { token },
+      },
+    } = getState(); const { data } = await Axios.get('/api/notes/' + _id, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      }
+    })
+    dispatch({ type: NOTE_DETAIL_SUCCESS, payload: data })
+  } catch (error) {
+    const message = error.response && error.response.data.message
+      ? error.response.data.message
+      : error.message
+    dispatch({ type: NOTE_DETAIL_FAIL, payload: message })
   }
 }

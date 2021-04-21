@@ -20,8 +20,8 @@ export default function Notes(props) {
   const Note = useSelector(state => state.Note);
   const { success } = Note;
 
-  const noteDelete = useSelector(state => state.noteDelete);
-  const { success: successDelete } = noteDelete;
+  // const noteDelete = useSelector(state => state.noteDelete);
+  // const { success: successDelete } = noteDelete;
 
   const dispatch = useDispatch();
 
@@ -34,15 +34,15 @@ export default function Notes(props) {
     setTitle('');
     setDescription('');
   };
-  const deleteHandler = _id => {
-    dispatch(deleteNote(_id));
-  };
+  // const deleteHandler = _id => {
+  //   dispatch(deleteNote(_id));
+  // };
   const editHandler = _id => {
     console.log(_id);
   };
   useEffect(() => {
     dispatch(listNote());
-  }, [dispatch, success, successDelete]);
+  }, [dispatch, success]);
 
   return (
     <>
@@ -200,9 +200,9 @@ export default function Notes(props) {
             notes.map(note => (
               <div
                 class='col-md-3'
-                onDoubleClick={() => {
-                  deleteHandler(note._id);
-                }}
+                // onDoubleClick={() => {
+                //   deleteHandler(note._id);
+                // }}
                 onClick={() => {
                   editHandler(note._id);
                 }}
@@ -215,14 +215,7 @@ export default function Notes(props) {
                     <h5 class='card-title'>{note.title}</h5>
                     <p class='card-text'>
                       {note.description}
-                      <Link
-                        to={`/notes/${note._id}`}
-                        // onClick={() => {
-                        //   props.history.push(`/order/${order._id}`);
-                        // }}
-                      >
-                        Read more
-                      </Link>
+                      <Link to={`/notes/${note._id}`}>Read more</Link>
                     </p>
                   </div>
                 </div>
